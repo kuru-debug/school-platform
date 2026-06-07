@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+const { useState, useEffect } = React;
 
 // --- TYPES & INTERFACES ---
 interface Child {
