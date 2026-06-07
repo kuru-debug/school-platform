@@ -114,7 +114,7 @@ function SchoolPlatform() {
     }, 600);
   };
 
-  return React.createElement('div', { className: 'max-w-md mx-auto min-h-screen bg-gray-50 flex flex-col font-sans border-x border-gray-200 shadow-inner pb-24' },
+  return React.createElement('div', { className: 'w-full max-w-md lg:max-w-5xl mx-auto min-h-screen bg-gray-50 flex flex-col font-sans border-x border-gray-200 shadow-inner pb-24 lg:pb-12' },
     networkStatus === 'offline' && React.createElement('div', { className: 'bg-amber-500 text-white text-xs font-bold px-4 py-1 text-center animate-pulse' }, '⚠️ Running in Offline Mode — Changes will sync when network returns.'),
     
     React.createElement('div', { className: 'bg-gray-800 text-gray-300 text-[10px] px-2 py-1 flex justify-between items-center' },
@@ -141,76 +141,84 @@ function SchoolPlatform() {
       }, isLoggedIn ? 'Sign Out' : 'Parent Login')
     ),
 
-    React.createElement('main', { className: 'flex-1 p-4 space-y-4' },
-      isLoggedIn && systemMode !== 'emergency' && React.createElement('div', { className: 'bg-white rounded-xl p-3 border border-gray-200 shadow-sm' },
-        React.createElement('label', { className: 'block text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-1' }, 'Active Student Context'),
-        React.createElement('select', {
-          value: activeChildId,
-          onChange: (e) => setActiveChildId(e.target.value),
-          className: 'w-full text-sm bg-gray-50 border border-gray-200 rounded-lg p-2.5 font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500'
-        },
-          React.createElement('option', { value: '' }, '-- No Child Selected (Choose Context) --'),
-          children.map(c => React.createElement('option', { key: c.id, value: c.id }, `👧 ${c.name} (${c.grade})`))
+    // Responsive split Grid: 1 column on mobile, 2 columns side-by-side on desktop PC
+    React.createElement('main', { className: 'flex-1 p-4 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start' },
+      
+      // Left Column: Student Selection and Announcements
+      React.createElement('div', { className: 'space-y-4 w-full' },
+        isLoggedIn && systemMode !== 'emergency' && React.createElement('div', { className: 'bg-white rounded-xl p-3 border border-gray-200 shadow-sm' },
+          React.createElement('label', { className: 'block text-[11px] font-bold tracking-wider text-gray-400 uppercase mb-1' }, 'Active Student Context'),
+          React.createElement('select', {
+            value: activeChildId,
+            onChange: (e) => setActiveChildId(e.target.value),
+            className: 'w-full text-sm bg-gray-50 border border-gray-200 rounded-lg p-2.5 font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500'
+          },
+            React.createElement('option', { value: '' }, '-- No Child Selected (Choose Context) --'),
+            children.map(c => React.createElement('option', { key: c.id, value: c.id }, `👧 ${c.name} (${c.grade})`))
+          ),
+          !activeChildId && React.createElement('p', { className: 'text-[11px] text-amber-600 mt-1.5 flex items-center gap-1 font-medium' }, '⚠️ Select a child above to align your AI answers.')
         ),
-        !activeChildId && React.createElement('p', { className: 'text-[11px] text-amber-600 mt-1.5 flex items-center gap-1 font-medium' }, '⚠️ Select a child above to align your AI answers.')
-      ),
 
-      React.createElement('section', { className: 'space-y-2' },
-        React.createElement('h2', { className: 'text-xs font-bold tracking-wider text-gray-400 uppercase' }, 'Latest Announcements'),
-        React.createElement('div', { className: 'space-y-2' },
-          announcements
-            .filter(a => systemMode === 'emergency' ? a.priority === 'emergency' : true)
-            .map(a => 
-              React.createElement('div', {
-                key: a.id,
-                className: `p-3.5 rounded-xl border transition-all ${a.priority === 'emergency' ? 'bg-red-50 border-red-200 text-red-900 shadow-sm ring-1 ring-red-300' : a.priority === 'important' ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-white border-gray-200 text-gray-800'}`
-              },
-                React.createElement('div', { className: 'flex items-center gap-1.5 mb-1' },
-                  React.createElement('span', { className: `text-[9px] uppercase font-bold px-2 py-0.5 rounded-full ${a.priority === 'emergency' ? 'bg-red-600 text-white' : a.priority === 'important' ? 'bg-amber-500 text-white' : 'bg-gray-200 text-gray-600'}` }, a.priority)
-                ),
-                React.createElement('h3', { className: 'font-bold text-sm leading-tight' }, a.title),
-                React.createElement('p', { className: 'text-xs text-gray-600 mt-1 leading-normal' }, a.content)
+        React.createElement('section', { className: 'space-y-2' },
+          React.createElement('h2', { className: 'text-xs font-bold tracking-wider text-gray-400 uppercase' }, 'Latest Announcements'),
+          React.createElement('div', { className: 'space-y-2' },
+            announcements
+              .filter(a => systemMode === 'emergency' ? a.priority === 'emergency' : true)
+              .map(a => 
+                React.createElement('div', {
+                  key: a.id,
+                  className: `p-3.5 rounded-xl border transition-all ${a.priority === 'emergency' ? 'bg-red-50 border-red-200 text-red-900 shadow-sm ring-1 ring-red-300' : a.priority === 'important' ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-white border-gray-200 text-gray-800'}`
+                },
+                  React.createElement('div', { className: 'flex items-center gap-1.5 mb-1' },
+                    React.createElement('span', { className: `text-[9px] uppercase font-bold px-2 py-0.5 rounded-full ${a.priority === 'emergency' ? 'bg-red-600 text-white' : a.priority === 'important' ? 'bg-amber-500 text-white' : 'bg-gray-200 text-gray-600'}` }, a.priority)
+                  ),
+                  React.createElement('h3', { className: 'font-bold text-sm leading-tight' }, a.title),
+                  React.createElement('p', { className: 'text-xs text-gray-600 mt-1 leading-normal' }, a.content)
+                )
               )
-            )
+          )
         )
       ),
 
-      systemMode === 'emergency' 
-        ? React.createElement('div', { className: 'bg-red-50 text-red-800 text-xs p-4 rounded-xl border border-red-200 font-medium' }, '🛑 Emergency Operations Mode Active. Forms and AI options are hidden.')
-        : React.createElement(React.Fragment, null,
-            React.createElement('div', { className: 'grid grid-cols-3 gap-2.5' },
-              React.createElement('button', { onClick: () => { setShowEnrollmentModal(true); setEnrollStep(1); }, className: 'bg-white border border-gray-200 p-3 rounded-xl flex flex-col items-center justify-center text-center hover:bg-gray-50 transition shadow-sm' },
-                React.createElement('span', { className: 'text-xl mb-1' }, '📝'),
-                React.createElement('span', { className: 'text-xs font-bold text-gray-700' }, 'Enrollment')
+      // Right Column: Dashboard Utilities or Emergency Notice
+      React.createElement('div', { className: 'space-y-4 w-full' },
+        systemMode === 'emergency' 
+          ? React.createElement('div', { className: 'bg-red-50 text-red-800 text-xs p-4 rounded-xl border border-red-200 font-medium' }, '🛑 Emergency Operations Mode Active. Forms and AI options are hidden.')
+          : React.createElement(React.Fragment, null,
+              React.createElement('div', { className: 'grid grid-cols-3 gap-2.5' },
+                React.createElement('button', { onClick: () => { setShowEnrollmentModal(true); setEnrollStep(1); }, className: 'bg-white border border-gray-200 p-3 rounded-xl flex flex-col items-center justify-center text-center hover:bg-gray-50 transition shadow-sm' },
+                  React.createElement('span', { className: 'text-xl mb-1' }, '📝'),
+                  React.createElement('span', { className: 'text-xs font-bold text-gray-700' }, 'Enrollment')
+                ),
+                React.createElement('button', { onClick: () => alert(isLoggedIn ? "Opening Report Cards..." : "Please Login first."), className: 'bg-white border border-gray-200 p-3 rounded-xl flex flex-col items-center justify-center text-center hover:bg-gray-50 transition shadow-sm' },
+                  React.createElement('span', { className: 'text-xl mb-1' }, '📊'),
+                  React.createElement('span', { className: 'text-xs font-bold text-gray-700' }, 'Report Cards')
+                ),
+                React.createElement('button', { onClick: () => alert(isLoggedIn ? "Opening Document Requests..." : "Please Login first."), className: 'bg-white border border-gray-200 p-3 rounded-xl flex flex-col items-center justify-center text-center hover:bg-gray-50 transition shadow-sm' },
+                  React.createElement('span', { className: 'text-xl mb-1' }, '📄'),
+                  React.createElement('span', { className: 'text-xs font-bold text-gray-700' }, 'Request Docs')
+                )
               ),
-              React.createElement('button', { onClick: () => alert(isLoggedIn ? "Opening Report Cards..." : "Please Login first."), className: 'bg-white border border-gray-200 p-3 rounded-xl flex flex-col items-center justify-center text-center hover:bg-gray-50 transition shadow-sm' },
-                React.createElement('span', { className: 'text-xl mb-1' }, '📊'),
-                React.createElement('span', { className: 'text-xs font-bold text-gray-700' }, 'Report Cards')
-              ),
-              React.createElement('button', { onClick: () => alert(isLoggedIn ? "Opening Document Requests..." : "Please Login first."), className: 'bg-white border border-gray-200 p-3 rounded-xl flex flex-col items-center justify-center text-center hover:bg-gray-50 transition shadow-sm' },
-                React.createElement('span', { className: 'text-xl mb-1' }, '📄'),
-                React.createElement('span', { className: 'text-xs font-bold text-gray-700' }, 'Request Docs')
-              )
-            ),
 
-            React.createElement('section', { className: 'bg-white border border-gray-200 rounded-2xl p-4 shadow-sm space-y-3' },
-              React.createElement('div', { className: 'flex items-center gap-2' },
-                React.createElement('span', { className: 'text-lg' }, '🤖'),
-                React.createElement('h3', { className: 'font-bold text-sm text-gray-800' }, 'Smart AI Assistant')
-              ),
-              React.createElement('div', { className: 'bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs text-gray-600 italic leading-relaxed' }, isAiLoading ? "Processing query safely..." : aiResponse),
-              React.createElement('form', { onSubmit: handleAiAsk, className: 'flex gap-2' },
-                React.createElement('input', {
-                  type: 'text',
-                  value: aiQuery,
-                  onChange: (e) => setAiQuery(e.target.value),
-                  placeholder: 'Ask about enrollment...',
-                  className: 'flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500'
-                }),
-                React.createElement('button', { type: 'submit', className: 'bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-bold' }, 'Ask')
+              React.createElement('section', { className: 'bg-white border border-gray-200 rounded-2xl p-4 shadow-sm space-y-3' },
+                React.createElement('div', { className: 'flex items-center gap-2' },
+                  React.createElement('span', { className: 'text-lg' }, '🤖'),
+                  React.createElement('h3', { className: 'font-bold text-sm text-gray-800' }, 'Smart AI Assistant')
+                ),
+                React.createElement('div', { className: 'bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs text-gray-600 italic leading-relaxed' }, isAiLoading ? "Processing query safely..." : aiResponse),
+                React.createElement('form', { onSubmit: handleAiAsk, className: 'flex gap-2' },
+                  React.createElement('input', {
+                    type: 'text',
+                    value: aiQuery,
+                    onChange: (e) => setAiQuery(e.target.value),
+                    placeholder: 'Ask about enrollment...',
+                    className: 'flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  }),
+                  React.createElement('button', { type: 'submit', className: 'bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-bold' }, 'Ask')
+                )
               )
             )
-          )
+      )
     ),
 
     showEnrollmentModal && React.createElement('div', { className: 'fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end justify-center p-0 sm:p-4' },
@@ -292,7 +300,8 @@ function SchoolPlatform() {
       )
     ),
 
-    React.createElement('footer', { className: 'fixed bottom-0 max-w-md w-full bg-white border-t border-gray-200 py-2.5 px-6 flex justify-between items-center text-gray-400 z-40' },
+    // Hidden footer on desktop screens since desktop has lots of viewport area
+    React.createElement('footer', { className: 'fixed bottom-0 max-w-md w-full bg-white border-t border-gray-200 py-2.5 px-6 flex justify-between items-center text-gray-400 z-40 lg:hidden' },
       React.createElement('button', { className: 'flex flex-col items-center text-blue-600' }, React.createElement('span', { className: 'text-xl' }, '🏠'), React.createElement('span', { className: 'text-[10px] font-bold' }, 'Home')),
       React.createElement('button', { className: 'flex flex-col items-center' }, React.createElement('span', { className: 'text-xl' }, '📢'), React.createElement('span', { className: 'text-[10px]' }, 'Alerts')),
       React.createElement('button', { className: 'flex flex-col items-center' }, React.createElement('span', { className: 'text-xl' }, '📄'), React.createElement('span', { className: 'text-[10px]' }, 'Docs')),
